@@ -19,6 +19,7 @@ git open [remote] [branch]
 c,commit!     open current commit
 i,issue!      open issues page
 p,print!      just print the url
+s,suffix!     add a suffix to the url
 "
 
 # https://github.com/koalaman/shellcheck/wiki/SC1090
@@ -28,6 +29,7 @@ SUBDIRECTORY_OK='Yes' . "$(git --exec-path)/git-sh-setup"
 # Defaults
 is_commit=0
 is_issue=0
+suffix=""
 protocol="https"
 print_only=0
 
@@ -36,6 +38,7 @@ while test $# != 0; do
   --commit|-c) is_commit=1;;
   --issue|-i) is_issue=1;;
   --print|-p) print_only=1;;
+  --suffix|-s) shift; suffix=$1;;
   --) shift; break ;;
   esac
   shift
@@ -236,6 +239,10 @@ if (( is_commit )); then
 elif [[ $remote_ref != "master" ]]; then
     # simplify URL for master
     openurl="$openurl$providerBranchRef"
+fi
+
+if [[ "$suffix" ]]; then
+    openurl="$openurl/$suffix"
 fi
 
 # get current open browser command
